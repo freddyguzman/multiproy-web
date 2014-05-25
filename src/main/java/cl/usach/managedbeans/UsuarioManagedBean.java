@@ -6,6 +6,7 @@
 
 package cl.usach.managedbeans;
 
+import cl.usach.converter.CodSHA;
 import cl.usach.entities.Grupo;
 import cl.usach.entities.RolUsuario;
 import cl.usach.entities.Usuario;
@@ -13,6 +14,7 @@ import cl.usach.sessionbeans.AsignaturaFacadeLocal;
 import cl.usach.sessionbeans.GrupoFacadeLocal;
 import cl.usach.sessionbeans.RolUsuarioFacadeLocal;
 import cl.usach.sessionbeans.UsuarioFacadeLocal;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -151,8 +153,10 @@ public class UsuarioManagedBean {
         this.usuariosFiltrados = usuariosFiltrados;
     }
     
-    public void nuevoUsuario(){
+    public void nuevoUsuario() throws NoSuchAlgorithmException{
         idRolUsuario = rolUsuarioFacade.buscarPorId(idRolUsuarioSeleccionado);
+        CodSHA cod = new CodSHA();
+        passUsuario = cod.codificarSHA256(passUsuario);
         Usuario usuario = new Usuario(nombreUsuario, emailUsuario, loginUsuario, passUsuario, idRolUsuario);
         
         FacesMessage msg = new FacesMessage("Usuario Agregado",usuario.getNombreUsuario());  
