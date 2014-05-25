@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core">    
+    <body>
+        <ui:composition template="/template/commonTemplate.xhtml">
+            <ui:define name="content">
+                <h1>Cuentas</h1>
+                
+                <h:form>
+                <p:commandButton id="showDialogNuevaCuenta" type="button" value="Nueva Cuenta" onclick="PF('dlgNuevaCuenta').show()"/>
+                </h:form>
+                <br/>
+                <p:dialog header="Nueva Cuenta" widgetVar="dlgNuevaCuenta" resizable="false" modal="true">
+                    <h:form id="formAgregarCuenta">                     
+                        <h:panelGrid id="panelNuevaCuenta" columns="2" style="margin-bottom: 10px">                            
+                            
+                            <h:outputLabel for="dropDownTiposCuenta" value="Tipo Cuenta" />  
+                            <h:selectOneMenu id="dropDownTiposCuenta" value="#{cuentaManagedBean.idTipoCuentaSeleccionada}"
+                                             onchange="cambiarTipoCuenta(this.value)">
+                                <f:selectItems value="#{cuentaManagedBean.tiposCuenta}" var="tc" 
+                                               itemLabel="#{tc.nombreTipoCuenta}" itemValue="#{tc.idTipoCuenta}" />
+                            </h:selectOneMenu>
+                                                        
+                            <h:outputLabel for="inputNombreUsuarioCuenta" value="Usuario Cuenta"  />  
+                            <p:inputText id="inputNombreUsuarioCuenta" value="#{cuentaManagedBean.nombreUsuarioCuenta}" 
+                                         required="true" requiredMessage="Nombre usuario Cuenta no puede ser vacio"/>
+
+                            <h:outputLabel for="inputEmailCuenta" value="Email Cuenta" />  
+                            <p:inputText id="inputEmailCuenta" value="#{cuentaManagedBean.emailCuenta}" 
+                                         required="true" requiredMessage="Email Cuenta no puede ser vacio"/> 
+                        </h:panelGrid>
+                        
+                        <p:separator />
+                        
+                        <p>
+                            Para obtener los datos de su cuenta debe agregar los siguientes campos.<br/>
+                            Siga las instrucciones que se encuentran al final para obtenerlos.<br/>
+                        </p>
+                        <h:panelGrid id="panelNuevaCuenta2" columns="2" style="margin-bottom: 10px"> 
+
+                            <h:outputLabel id="lblInputKeyCuenta" for="inputKeyCuenta" value="Key Cuenta (*)" />  
+                            <p:inputText id="inputKeyCuenta" value="#{cuentaManagedBean.keyCuenta}" onblur="checkKeySecret()"
+                                         required="true" requiredMessage="Key Cuenta no puede ser vacio"/>
+                                                        
+                            <h:outputLabel id="lblInputSecretCuenta" for="inputSecretCuenta" value="Secret Cuenta (*)" />  
+                            <p:inputText id="inputSecretCuenta" value="#{cuentaManagedBean.secretCuenta}" onblur="checkKeySecret()"/>
+                            
+                            <h:outputLabel id="lblInputTokenCuenta" for="inputTokenCuenta" value="Token Cuenta (*)" />  
+                            <p:inputText id="inputTokenCuenta" value="#{cuentaManagedBean.tokenCuenta}" />
+
+                        </h:panelGrid>                      
+                        
+                        <p:commandButton id="Aceptar" value="Aceptar" 
+                                         update=":formCuentas:listaCuenta,:formCuentas:messages,:formAgregarCuenta" 
+                                         actionListener="#{cuentaManagedBean.nuevaCuenta()}" oncomplete="PF('dlgNuevaCuenta').hide();">
+                            <p:resetInput target="formAgregarCuenta"></p:resetInput>
+                        </p:commandButton>
+                        <p:commandButton id="Cancelar" value="Cancelar" update=":formAgregarCuenta" process="@this" onclick="PF('dlgNuevaCuenta').hide();">
+                                <p:resetInput target="formAgregarCuenta"></p:resetInput>
+                        </p:commandButton>                        
+                        <br/>
+                        <p:ajaxStatus style="width:16px;height:16px;float: left" id="ajaxStatusPanel">
+                            <f:facet name="start">
+                                <h:graphicImage value="/resources/img/ajax-loader.gif" />
+                            </f:facet>
+                            <f:facet name="complete">
+                                <h:outputText value="" />
+                            </f:facet>
+                        </p:ajaxStatus>
+                        <br/>
+                        <p:separator />
+                        <div id="infoTrello">
+                            <h:graphicImage value="/resources/img/trello.jpg" />    
+                            <p>(*) Para obtener tu <b>Key</b> y <b>Secret</b> de tu cuenta:
+                                <ul>
+                                    <li>Debes ingresar a la página de <a href="https://trello.com/" target="_blank">https://trello.com/</a> con tu usuario y contraseña</li>
+                                    <li>Luego acceder a <a href="https://trello.com/1/appKey/generate" target="_blank">https://trello.com/1/appKey/generate</a> y copiar los valores</li> 
+                                </ul> 
+                                Para obtener el <b>Token</b> debes haber ingresado tu Key y Secret correctamente <br/>
+                                y luego ingresar <a id="getToken" href="" target="_blank"><b>aquí</b></a>
+                            </p>                               
+                        </div>
+                        <div id="infoKanbanize" style="display: none">
+                            <h:graphicImage value="/resources/img/kanbanize.jpg" />
+                            <p>(*) Para obtener tu Key
+                                <ul>
+                                    <li>Debes ingresar a la página de <a href="https://kanbanize.com/" target="_blank">https://kanbanize.com/</a> con tu usuario y contraseña</li>
+                                    <li>Luego acceder a My account->API panel</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </h:form>
+                </p:dialog>
+                
+                <h:form id="formCuentas">
+                    <p:growl id="messages" showDetail="true"/> 
+                                       
+                    <p:dataTable var="cuentas" value="#{cuentaManagedBean.cuentas}" id="listaCuenta" editable="true" paginator="true" rows="10" 
+                                 widgetVar="wvListaCuenta" emptyMessage="Cuenta no encontrada" filteredValue="#{cuentaManagedBean.cuentasFiltradas}">
+                        
+                        <f:facet name="header">
+                            <div align="right">
+                                <p:outputPanel>
+                                    <span class="ui-icon ui-icon-search" style="display:inline-block"></span>
+                                    <p:inputText id="globalFilter" onkeyup="PF('wvListaCuenta').filter()" style="width:150px;"/>
+                                </p:outputPanel>
+                            </div>
+                        </f:facet>
+                        
+                        <p:ajax event="rowEdit" listener="#{cuentaManagedBean.onEdit}" update=":formCuentas:messages" />  
+                        <p:ajax event="rowEditCancel" listener="#{cuentaManagedBean.onCancel}" update=":formCuentas:messages" />
+
+                        <p:column headerText="Tipo Cuenta">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{cuentas.idTipoCuenta.nombreTipoCuenta}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <h:outputText value="#{cuentas.idTipoCuenta.nombreTipoCuenta}" />
+                                </f:facet>					
+                            </p:cellEditor>					
+                        </p:column>
+                        
+                        <p:column headerText="Usuario" filterBy="#{cuentas.idUsuario.nombreUsuario}" filterStyle="display:none" filterMatchMode="contains">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{cuentas.idUsuario.nombreUsuario}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <h:outputText value="#{cuentas.idUsuario.nombreUsuario}" />
+                                </f:facet>					
+                            </p:cellEditor>					
+                        </p:column>
+                        
+                        <p:column headerText="Usuario Cuenta" filterBy="#{cuentas.nombreUsuarioCuenta}" filterStyle="display:none" filterMatchMode="contains">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{cuentas.nombreUsuarioCuenta}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <h:outputText value="#{cuentas.nombreUsuarioCuenta}" />
+                                </f:facet>					
+                            </p:cellEditor>					
+                        </p:column>
+                        
+                        <p:column headerText="Email Cuenta" filterBy="#{cuentas.emailCuenta}" filterStyle="display:none" filterMatchMode="contains">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{cuentas.emailCuenta}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <h:inputText value="#{cuentas.emailCuenta}" style="width:100%" />
+                                </f:facet>					
+                            </p:cellEditor>					
+                        </p:column>
+                        
+                        <p:column style="width:6%" headerText="Acciones">  
+                            <p:rowEditor ></p:rowEditor>
+                            <p:commandLink id="btnConfEliminarCuenta" update=":formCuentas:listaCuenta,:formCuentas:messages"  action="#{cuentaManagedBean.eliminarAsignatura()}"  title="Eliminar" >
+                                <span class="ui-icon ui-icon-trash"></span>
+                                <f:setPropertyActionListener value="#{cuentas}" target="#{cuentaManagedBean.cuentaSeleccionada}"/>
+                                <p:confirm header="Eliminar Cuenta" message="¿Esta seguro de eliminar esta cuenta?" icon="ui-icon-alert"/>
+                            </p:commandLink>
+                        </p:column>                                            
+
+                    </p:dataTable>
+                    
+                    <p:confirmDialog global="true">  
+                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>  
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>       
+                    </p:confirmDialog>
+                </h:form>
+            </ui:define>
+            
+            <ui:define name="script">
+                <script>
+                    function setIdAsignatura(idAsignatura){
+                        $("#formAgregarCuenta\\:idAsignaturaCuenta").val(idAsignatura);
+                    }
+                    
+                    function checkKeySecret(){
+                        var key = $("#formAgregarCuenta\\:inputKeyCuenta").val();
+                        var secret = $("#formAgregarCuenta\\:inputSecretCuenta").val();
+                        if(key !== ""){
+                            if(secret !== ""){
+                                var url = "https://trello.com/1/authorize?key="+ key +"&amp;name=Multiproy&amp;expiration=never&amp;response_type=token";
+                                $("#getToken").attr("href",url);
+                            }else{
+                                $("#getToken").attr("href",null);
+                            }
+                        }else{
+                            $("#getToken").attr("href",null);
+                        }
+                    }
+                    
+                    function cambiarTipoCuenta(idCuenta){
+                        if(idCuenta === "1"){
+                            $("#infoTrello").show();
+                            $("#infoKanbanize").hide();
+                            $("#formAgregarCuenta\\:inputKeyCuenta").show();
+                            $("#formAgregarCuenta\\:inputSecretCuenta").show();
+                            $("#formAgregarCuenta\\:inputTokenCuenta").show();
+                            $("#formAgregarCuenta\\:lblInputKeyCuenta").show();
+                            $("#formAgregarCuenta\\:lblInputSecretCuenta").show();
+                            $("#formAgregarCuenta\\:lblInputTokenCuenta").show();                           
+                        }else{
+                            $("#infoTrello").hide();
+                            $("#infoKanbanize").show();
+                            $("#formAgregarCuenta\\:inputKeyCuenta").show();
+                            $("#formAgregarCuenta\\:inputSecretCuenta").hide();
+                            $("#formAgregarCuenta\\:inputTokenCuenta").hide();
+                            $("#formAgregarCuenta\\:lblInputKeyCuenta").show();
+                            $("#formAgregarCuenta\\:lblInputSecretCuenta").hide();
+                            $("#formAgregarCuenta\\:lblInputTokenCuenta").hide(); 
+                        }
+                    }
+                </script>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

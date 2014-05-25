@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core">    
+    <body>
+        <ui:composition template="/template/commonTemplate.xhtml">
+            <ui:define name="content">
+                <h1>Agregar Tableros</h1>               
+                
+                <h:form id="formAgregarTablero">
+                    
+                    <p:commandButton style="float: left" id="buscarTableros" action="#{tableroManagedBean.buscarTableros()}" value="Buscar" update="formAgregarTablero:dataTableTableros"/>
+                    <p:ajaxStatus style="width:16px;height:16px;float: left" id="ajaxStatusPanel">
+                        <f:facet name="start">
+                            <h:graphicImage value="/resources/img/ajax-loader.gif" />
+                        </f:facet>
+                        <f:facet name="complete">
+                            <h:outputText value="" />
+                        </f:facet>
+                    </p:ajaxStatus>
+                    <br/><br/>
+                    <p:growl id="messages" showDetail="true"/> 
+                    
+                    <p:dataTable id="dataTableTableros" var="equipo" value="#{tableroManagedBean.equipos}" editable="true">
+                        <p:column headerText="Cuenta">
+                            <h:outputLabel value="#{equipo.idCuenta.idTipoCuenta.nombreTipoCuenta}" />
+                        </p:column>
+                        <p:column headerText="Email Cuenta">
+                            <h:outputLabel value="#{equipo.idCuenta.emailCuenta}" />
+                        </p:column>
+                        <p:column headerText="Nombre">
+                            <h:outputLabel value="#{equipo.idTablero.nombreTablero}" />
+                        </p:column>
+                        <p:column headerText="URL">
+                            <h:outputLabel value="#{equipo.idTablero.urlTablero}" />
+                        </p:column>
+                        <p:column>
+                            <p:commandButton rendered="#{!tableroManagedBean.existeEquipo(equipo)}" value="Agregar Tablero" 
+                                             type="submit" action="#{tableroManagedBean.nuevoTablero}" 
+                                             update=":formAgregarTablero:messages,:formAgregarTablero:dataTableTableros">
+                                <f:setPropertyActionListener value="#{equipo}" target="#{tableroManagedBean.equipoSeleccionado}" />
+                            </p:commandButton>
+                            <p:commandButton rendered="#{tableroManagedBean.existeEquipo(equipo)}" value="Eliminar Tablero" 
+                                             type="submit" action="#{tableroManagedBean.eliminarTablero()}"
+                                             update=":formAgregarTablero:messages,:formAgregarTablero:dataTableTableros">
+                                <f:setPropertyActionListener value="#{equipo}" target="#{tableroManagedBean.equipoSeleccionado}" />
+                                <p:confirm header="Eliminar Tablero" message="¿Esta seguro de eliminar este tablero?" icon="ui-icon-alert"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                    
+                    <p:confirmDialog global="true">  
+                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>  
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>       
+                    </p:confirmDialog>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

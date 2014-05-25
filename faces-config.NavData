@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scene Scope="Project" version="2">
+    <Scope Scope="Faces Configuration Only"/>
+    <Scope Scope="Project">
+        <Node id="template/commonContent.xhtml" x="150" y="300" zoom="true"/>
+        <Node id="conf/asignaturas.xhtml" x="150" y="450" zoom="true"/>
+        <Node id="template/commonScript.xhtml" x="400" y="300" zoom="true"/>
+        <Node id="template/commonTemplate.xhtml" x="400" y="450" zoom="true"/>
+        <Node id="index.xhtml" x="400" y="150" zoom="true"/>
+        <Node id="template/commonHeader.xhtml" x="900" y="150" zoom="true"/>
+        <Node id="template/commonFooter.xhtml" x="150" y="600" zoom="true"/>
+        <Node id="conf/usuarios.xhtml" x="650" y="150" zoom="true"/>
+        <Node id="tableros/agregarTableros.xhtml" x="150" y="150" zoom="true"/>
+        <Node id="tableros/tableros.xhtml" x="650" y="300" zoom="true"/>
+    </Scope>
+    <Scope Scope="All Faces Configurations"/>
+</Scene>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core">    
+    <body>
+        <ui:composition template="/template/commonTemplate.xhtml">
+            <ui:define name="content">
+                <h1>Asignaturas</h1>
+                
+                <h:form>
+                <p:commandButton id="showDialogNuevaAsignatura" type="button" value="Nueva Asignatura" onclick="PF('dlgNuevaAsignatura').show()"/>
+                </h:form>
+                <p:dialog header="Nueva Asignatura" widgetVar="dlgNuevaAsignatura" resizable="false" modal="true">
+                    <h:form id="formAgregarAsignatura">
+                        <h:panelGrid id="panelNuevaAsignatura" columns="2" style="margin-bottom: 10px">
+                            <h:outputLabel for="inputNombreAsignatura" value="Nombre:" />  
+                            <p:inputText id="inputNombreAsignatura" value="#{asignaturaManagedBean.nombreAsignatura}" 
+                                         required="true" requiredMessage="Nombre Asignatura requerido"/>
+
+                            <h:outputLabel for="inputCreditoAsignatura" value="Crédito:" />  
+                            <p:inputText id="inputCreditoAsignatura" value="#{asignaturaManagedBean.creditoAsignatura}" />
+
+                            <h:outputLabel for="inputHorasAsignaturas" value="Horas:" />  
+                            <p:inputText id="inputHorasAsignaturas" value="#{asignaturaManagedBean.horasDeTrabajoAsignatura}" />
+                            
+                            <h:outputLabel for="dropDownSemestreAsignaturas" value="Semestre" />  
+                            <h:selectOneMenu id="dropDownSemestreAsignaturas" value="#{asignaturaManagedBean.semestreAsignatura}">
+                                <f:selectItem itemValue="1" itemLabel="1" />
+                                <f:selectItem itemValue="2" itemLabel="2" />
+                            </h:selectOneMenu>
+                            
+                            <h:outputLabel for="inputAnoAsignaturas" value="Año" />  
+                            <p:outputLabel id="inputAnoAsignaturas" value="#{asignaturaManagedBean.anoActual}" />
+
+                        </h:panelGrid>
+                        
+                        <p:commandButton id="Aceptar" value="Aceptar" update=":formAsignaturas:listaAsignatura,:formAsignaturas:messages" actionListener="#{asignaturaManagedBean.nuevaAsignatura()}" oncomplete="PF('dlgNuevaAsignatura').hide();"/>  
+                        <p:commandButton id="Cancelar" value="Cancelar" update=":formAgregarAsignatura:panelNuevaAsignatura" process="@this" onclick="PF('dlgNuevaAsignatura').hide();">
+                                <p:resetInput target="panelNuevaAsignatura"></p:resetInput>
+                        </p:commandButton>	 
+                    </h:form>
+                </p:dialog><br/>
+                
+                <h:form id="formAsignaturas">
+                    <p:growl id="messages" showDetail="true"/> 
+                                       
+                    <p:dataTable var="asignatura" value="#{asignaturaManagedBean.asignaturas}" id="listaAsignatura" editable="true" paginator="true" rows="10" 
+                                 widgetVar="wvListaAsignatura" emptyMessage="Asignatura no encontrada" filteredValue="#{asignaturaManagedBean.asignaturasFiltradas}">
+                        
+                        <f:facet name="header">
+                            <div align="right">
+                                <p:outputPanel>
+                                    <span class="ui-icon ui-icon-search" style="display:inline-block"></span>
+                                    <p:inputText id="globalFilter" onkeyup="PF('wvListaAsignatura').filter()" style="width:150px;"/>
+                                </p:outputPanel>
+                            </div>
+                        </f:facet>
+                        
+                        <p:ajax event="rowEdit" listener="#{asignaturaManagedBean.onEdit}" update=":formAsignaturas:messages" />  
+                        <p:ajax event="rowEditCancel" listener="#{asignaturaManagedBean.onCancel}" update=":formAsignaturas:messages" />
+
+                        <p:column filterBy="#{asignatura.nombreAsignatura}" filterStyle="display:none" filterMatchMode="contains" headerText="Nombre">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{asignatura.nombreAsignatura}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <h:inputText value="#{asignatura.nombreAsignatura}" style="width:100%" />
+                                </f:facet>					
+                            </p:cellEditor>					
+                        </p:column>
+                        <p:column headerText="Usuario" filterStyle="display:none" filterBy="#{asignatura.idUsuario.getNombreUsuario()}" filterMatchMode="contains">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{asignatura.idUsuario.getNombreUsuario()}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <h:outputText value="#{asignatura.idUsuario.getNombreUsuario()}" style="width:100%"/>
+                                </f:facet>
+                            </p:cellEditor>						
+                        </p:column>
+                        <p:column headerText="Créditos">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{asignatura.creditoAsignatura}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <h:inputText value="#{asignatura.creditoAsignatura}" style="width:100%"/>
+                                </f:facet>
+                            </p:cellEditor>						
+                        </p:column>
+                        <p:column headerText="Horas de Trabajo">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{asignatura.horasDeTrabajoAsignatura}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <h:inputText value="#{asignatura.horasDeTrabajoAsignatura}" style="width:100%"/>
+                                </f:facet>
+                            </p:cellEditor>						
+                        </p:column>
+                        <p:column headerText="Semestre">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{asignatura.semestreAsignatura}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <h:inputText value="#{asignatura.semestreAsignatura}" style="width:100%"/>
+                                </f:facet>
+                            </p:cellEditor>						
+                        </p:column>
+                        <p:column headerText="Año" >
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{asignatura.anoAsignatura}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <h:inputText value="#{asignatura.anoAsignatura}" style="width:100%"/>
+                                </f:facet>
+                            </p:cellEditor>						
+                        </p:column>
+                        <p:column headerText="Cerrada">
+                            <h:outputText rendered="#{asignatura.cierreAsignatura == '0'}" value="No Cerrada" />
+                            <h:outputText rendered="#{asignatura.cierreAsignatura == '1'}" value="Cerrada" />						
+                        </p:column>
+                        <p:column style="width:6%" headerText="Acciones">  
+                            <p:rowEditor ></p:rowEditor>
+                            <p:commandLink id="btnConfEliminarAsignatura" update=":formAsignaturas:listaAsignatura,:formAsignaturas:messages"  action="#{asignaturaManagedBean.eliminarAsignatura()}"  title="Eliminar" >
+                                <span class="ui-icon ui-icon-trash"></span>
+                                <f:setPropertyActionListener value="#{asignatura}" target="#{asignaturaManagedBean.asignaturaSeleccionada}"/>
+                                <p:confirm header="Eliminar Asignatura" message="¿Esta seguro de eliminar esta asignatura?" icon="ui-icon-alert"/>
+                            </p:commandLink>
+                        </p:column>                                            
+
+                    </p:dataTable>
+                    
+                    <p:confirmDialog global="true">  
+                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>  
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>       
+                    </p:confirmDialog>
+                </h:form> 
+                
+            </ui:define>
+            
+        </ui:composition>
+    </body>
+</html>

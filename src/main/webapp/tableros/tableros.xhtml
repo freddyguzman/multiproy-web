@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core">    
+    <body>
+        <ui:composition template="/template/commonTemplate.xhtml">            
+            <ui:define name="content">
+                <h1>Tableros</h1>
+                <p:button value="Agregar Tableros" outcome="/tableros/agregarTableros"/>
+                <p:panel>
+                    Para visualizar los tableros, primero debe ingresar a su cuenta correspondiente
+                </p:panel>
+                <br/><br/> 
+                <h:form id="formVerTableros">
+                    <p:tabView orientation="left" value="#{verTablerosManagedBean.tableros}" var="tablero">
+                        <p:tab title="#{tablero.nombreTablero}">
+                            <iframe src="#{tablero.urlTablero}" width="100%" height="800px" style="border:0"/>
+                        </p:tab>
+                    </p:tabView>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>
