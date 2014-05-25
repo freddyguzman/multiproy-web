@@ -6,9 +6,11 @@
 
 package cl.usach.managedbeans;
 
+import cl.usach.entities.Grupo;
 import cl.usach.entities.RolUsuario;
 import cl.usach.entities.Usuario;
 import cl.usach.sessionbeans.AsignaturaFacadeLocal;
+import cl.usach.sessionbeans.GrupoFacadeLocal;
 import cl.usach.sessionbeans.RolUsuarioFacadeLocal;
 import cl.usach.sessionbeans.UsuarioFacadeLocal;
 import java.util.List;
@@ -27,6 +29,8 @@ import org.primefaces.event.RowEditEvent;
 @Named(value = "usuarioManagedBean")
 @ViewScoped
 public class UsuarioManagedBean {
+    @EJB
+    private GrupoFacadeLocal grupoFacade;
     @EJB
     private AsignaturaFacadeLocal asignaturaFacade;
     @EJB
@@ -156,6 +160,9 @@ public class UsuarioManagedBean {
         
         usuarioFacade.create(usuario);
         usuarios = usuarioFacade.findAll();
+        
+        Grupo grupo = new Grupo(loginUsuario, idRolUsuario.getNombreRolUsuario());
+        grupoFacade.create(grupo);
         limpiar();
     }
     
@@ -177,7 +184,11 @@ public class UsuarioManagedBean {
             FacesMessage msg = new FacesMessage("No se puede eliminar usuario",usuarioSeleccionado.getNombreUsuario() + " contiene asignaturas asignadas");
             FacesContext.getCurrentInstance().addMessage(null, msg); 
         }else{
-            usuarioFacade.remove(usuarioSeleccionado);
+            Grupo grupo = grupoFacade.buscarPorNombreUsuario(usuarioSeleccionado.getLoginUsuario());
+            grupoFacade.remove(grupo);
+            
+            usuarioFacade.remove(usuarioSeleccionado);           
+            
             FacesMessage msg = new FacesMessage("Usuario Eliminado",usuarioSeleccionado.getNombreUsuario());
             FacesContext.getCurrentInstance().addMessage(null, msg);
             usuarios = usuarioFacade.findAll();

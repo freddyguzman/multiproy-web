@@ -37,6 +37,12 @@
                         <p:column headerText="URL">
                             <h:outputLabel value="#{equipo.idTablero.urlTablero}" />
                         </p:column>
+                        <p:column headerText="Estado" >
+                            <p:graphicImage rendered="#{tableroManagedBean.existeEquipo(equipo)}"
+                                            value="/resources/img/258-checkmark.png" title="Agregado"/>
+                            <p:graphicImage rendered="#{!tableroManagedBean.existeEquipo(equipo)}"
+                                            value="/resources/img/298-circlex.png" title="No agregado" />
+                        </p:column>
                         <p:column>
                             <p:commandButton rendered="#{!tableroManagedBean.existeEquipo(equipo)}" value="Agregar Tablero" 
                                              type="submit" action="#{tableroManagedBean.nuevoTablero}" 
