@@ -32,6 +32,8 @@ public class AsignaturaManagedBean {
     private UsuarioFacadeLocal usuarioFacade;
     @EJB
     private AsignaturaFacadeLocal asignaturaFacade;
+    
+    private final SesionManagedBean sesionManagedBean = new SesionManagedBean();
 
     private Integer idAsignatura;
     private String nombreAsignatura;
@@ -49,13 +51,14 @@ public class AsignaturaManagedBean {
     private List<Asignatura> asignaturasFiltradas;
     
     private final int anoActual = Calendar.getInstance().get(Calendar.YEAR);
+    private final String loginUsuario = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
     
     public AsignaturaManagedBean() {
     }
     
     @PostConstruct
     public void init(){
-        asignaturas = asignaturaFacade.findAll();
+        actualizarLista();
     }
 
     public Integer getIdAsignatura() {
@@ -159,7 +162,7 @@ public class AsignaturaManagedBean {
     }
     
     public void nuevaAsignatura(){
-        idUsuario = usuarioFacade.buscarPorLogin("fguzman");
+        idUsuario = usuarioFacade.buscarPorLogin(loginUsuario);
         anoAsignatura = anoActual;
         cierreAsignatura = 0;
         Asignatura asignatura = new Asignatura(nombreAsignatura, creditoAsignatura, horasDeTrabajoAsignatura, semestreAsignatura, anoAsignatura, cierreAsignatura, idUsuario);
@@ -168,7 +171,7 @@ public class AsignaturaManagedBean {
         FacesContext.getCurrentInstance().addMessage(null, msg);
         
         asignaturaFacade.create(asignatura);
-        asignaturas = asignaturaFacade.findAll();
+        actualizarLista();
     }
     
     public void onEdit(RowEditEvent event){
@@ -187,7 +190,15 @@ public class AsignaturaManagedBean {
         FacesMessage msg = new FacesMessage("Asignatura Eliminada","");  
         FacesContext.getCurrentInstance().addMessage(null, msg);
         asignaturaFacade.remove(asignaturaSeleccionada);
-        asignaturas = asignaturaFacade.findAll();
+        actualizarLista();
     }
     
+    public void actualizarLista(){
+        if(sesionManagedBean.checkUserAdmin()){
+            asignaturas = asignaturaFacade.findAll();
+        }else{
+            Usuario usuarioActual = usuarioFacade.buscarPorLogin(loginUsuario);
+            asignaturas = asignaturaFacade.buscarPorIdUsuario(usuarioActual);
+        }
+    }    
 }

@@ -43,7 +43,10 @@ public class TableroManagedBean {
     private CuentaFacadeLocal cuentaFacade;
     @EJB
     private UsuarioFacadeLocal usuarioFacade;
-
+    
+    private final SesionManagedBean sesionManagedBean = new SesionManagedBean();
+    private final String loginUsuario = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
+    
     private List<Equipo> equipos;
     private Equipo equipoSeleccionado;
     
@@ -68,7 +71,7 @@ public class TableroManagedBean {
         
     public void buscarTableros(){
         List<Equipo> auxE = new ArrayList<>();
-        List<Usuario> usuarios = usuarioFacade.findAll();
+        List<Usuario> usuarios = buscarUsuarios();
         for (Usuario usuario : usuarios) {
             List<Cuenta> cuentas = cuentaFacade.buscarPorUsuario(usuario);
             for (Cuenta cuenta : cuentas) {
@@ -111,7 +114,22 @@ public class TableroManagedBean {
     public void eliminarTablero(){
         Equipo equ = equipoFacade.buscarPorCuentaYTablero(equipoSeleccionado.getIdCuenta(), equipoSeleccionado.getIdTablero().getIdTableroExt());
         equipoFacade.remove(equ);
+        if(!equipoFacade.existeEquipoPorTablero(equ.getIdTablero())){
+            tableroFacade.remove(equ.getIdTablero());
+        }
+        
         FacesMessage msg = new FacesMessage("Tablero Eliminado",equipoSeleccionado.getIdTablero().getNombreTablero());  
         FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
+    
+    public List<Usuario> buscarUsuarios(){
+        if(sesionManagedBean.checkUserAdmin()){
+           return usuarioFacade.findAll(); 
+        }else{
+           Usuario usuarioActual = usuarioFacade.buscarPorLogin(loginUsuario);
+           List<Usuario> usuarios = new ArrayList<>();
+           usuarios.add(usuarioActual);
+           return usuarios;
+        }
     }
 }

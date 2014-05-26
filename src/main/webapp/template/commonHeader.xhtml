@@ -5,7 +5,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:h="http://java.sun.com/jsf/html"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core">
 	
 	<h:body>
             <ui:composition>
@@ -14,11 +15,18 @@
                         <p:menuitem value="Tableros" icon="ui-icon-calculator" url="/faces/tableros/tableros.xhtml"/>
                         <p:menuitem value="Reportes" />
                         <p:submenu label="Configuración" icon="ui-icon-wrench">
-                                <p:menuitem value="Usuarios " url="/faces/conf/usuarios.xhtml"/>
-                                <p:menuitem value="Asignaturas " url="/faces/conf/asignaturas.xhtml" />
-                                <p:menuitem value="Cuentas " url="/faces/conf/cuentas.xhtml" />
+                            <p:menuitem rendered="#{sesionManagedBean.checkUserAdmin()}"
+                                        value="Usuarios" url="/faces/conf/usuarios.xhtml"/>
+                            <p:menuitem rendered="#{sesionManagedBean.checkUserAdminAndProfesor()}" 
+                                        value="Asignaturas" url="/faces/conf/asignaturas.xhtml" />
+                                <p:menuitem value="Cuentas" url="/faces/conf/cuentas.xhtml" />
                         </p:submenu>
-
+                        <f:facet name="options">
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Hola #{sesionManagedBean.username}" />
+                                <h:commandButton action="#{sesionManagedBean.logout()}" value="Cerrar Sesión" />                            
+                            </h:panelGrid>
+                        </f:facet>
                     </p:menubar>				 
                 </h:form>
             </ui:composition>

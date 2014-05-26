@@ -41,6 +41,8 @@ public class CuentaManagedBean {
     private TipoCuentaFacadeLocal tipoCuentaFacade;
     @EJB
     private CuentaFacadeLocal cuentaFacade;
+    
+    private final SesionManagedBean sesionManagedBean = new SesionManagedBean();
 
     private Integer idCuenta;
     private String nombreUsuarioCuenta;
@@ -58,14 +60,16 @@ public class CuentaManagedBean {
     
     private Cuenta cuentaSeleccionada;
     private TipoCuenta tipoCuentaSeleccionada;
-    private int idTipoCuentaSeleccionada;    
+    private int idTipoCuentaSeleccionada;
+    
+    private final String loginUsuario = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
     
     public CuentaManagedBean() {
     }
     
     @PostConstruct
     public void init(){
-        cuentas = cuentaFacade.findAll();
+        buscarCuentas();
         tiposCuenta = tipoCuentaFacade.findAll();
     }
 
@@ -191,7 +195,7 @@ public class CuentaManagedBean {
     
     public void nuevaCuenta(){
         TipoCuenta tipoC = tipoCuentaFacade.buscarPorId(idTipoCuentaSeleccionada);
-        Usuario usr = usuarioFacade.buscarPorLogin("fguzman");
+        Usuario usr = usuarioFacade.buscarPorLogin(loginUsuario);
         Cuenta cuenta = new Cuenta(nombreUsuarioCuenta, emailCuenta, keyCuenta, secretCuenta, tokenCuenta, tipoC, usr);
         
         if("Trello".equals(tipoC.getNombreTipoCuenta())){
@@ -214,7 +218,7 @@ public class CuentaManagedBean {
             }
         }
         limpiar();
-        cuentas = cuentaFacade.findAll();
+        buscarCuentas();
     }
     
     public void onEdit(RowEditEvent event){
@@ -238,7 +242,7 @@ public class CuentaManagedBean {
             FacesMessage msg = new FacesMessage("Cuenta NO Eliminada","ERROR: Esta cuenta depende de otros elementos.");        
             FacesContext.getCurrentInstance().addMessage(null, msg);
         }
-        cuentas = cuentaFacade.findAll();
+        buscarCuentas();
     }
     
     public void limpiar(){
@@ -250,5 +254,14 @@ public class CuentaManagedBean {
         tokenCuenta = null;
         idTipoCuenta = null;
         idTipoCuentaSeleccionada = 0;
+    }
+    
+    public void buscarCuentas(){
+        if(sesionManagedBean.checkUserAdmin()){
+            cuentas = cuentaFacade.findAll();
+        }else{
+            Usuario usuarioActual = usuarioFacade.buscarPorLogin(loginUsuario);
+            cuentas = cuentaFacade.buscarPorUsuario(usuarioActual);
+        }
     }
 }
