@@ -3,11 +3,25 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     
     <h:body>
         <ui:composition template="/template/commonTemplate.xhtml">
-
+            <ui:define name="content">
+                <h1>Inicio</h1>
+                <h:form>
+                    <p:commandButton value="Buscar Datos" action="#{escritorioManagedBean.buscarDatos()}"/>
+                    <p:ajaxStatus style="width:16px;height:16px;float: left" id="ajaxStatusPanel">
+                        <f:facet name="start">
+                            <h:graphicImage value="/resources/img/ajax-loader.gif" />
+                        </f:facet>
+                        <f:facet name="complete">
+                            <h:outputText value="" />
+                        </f:facet>
+                    </p:ajaxStatus>
+                </h:form>
+            </ui:define>
         </ui:composition>
     </h:body>
 </html>

@@ -49,7 +49,7 @@
                             <h:outputLabel id="lblInputSecretCuenta" for="inputSecretCuenta" value="Secret Cuenta (*)" />  
                             <p:inputText id="inputSecretCuenta" value="#{cuentaManagedBean.secretCuenta}" onblur="checkKeySecret()"/>
                             
-                            <h:outputLabel id="lblInputTokenCuenta" for="inputTokenCuenta" value="Token Cuenta (*)" />  
+                            <h:outputLabel id="lblInputTokenCuenta" for="inputTokenCuenta" value="Token Cuenta (**)" />  
                             <p:inputText id="inputTokenCuenta" value="#{cuentaManagedBean.tokenCuenta}" />
 
                         </h:panelGrid>                      
@@ -80,7 +80,7 @@
                                     <li>Debes ingresar a la página de <a href="https://trello.com/" target="_blank">https://trello.com/</a> con tu usuario y contraseña</li>
                                     <li>Luego acceder a <a href="https://trello.com/1/appKey/generate" target="_blank">https://trello.com/1/appKey/generate</a> y copiar los valores</li> 
                                 </ul> 
-                                Para obtener el <b>Token</b> debes haber ingresado tu Key y Secret correctamente <br/>
+                                (**) Para obtener el <b>Token</b> debes haber ingresado tu Key y Secret correctamente <br/>
                                 y luego ingresar <a id="getToken" href="" target="_blank"><b>aquí</b></a>
                             </p>                               
                         </div>
