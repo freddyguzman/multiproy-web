@@ -14,7 +14,6 @@ import cl.usach.sessionbeans.CuentaFacadeLocal;
 import cl.usach.sessionbeans.EquipoFacadeLocal;
 import cl.usach.sessionbeans.TableroFacadeLocal;
 import cl.usach.sessionbeans.UsuarioFacadeLocal;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;

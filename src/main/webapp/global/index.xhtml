@@ -10,8 +10,10 @@
         <ui:composition template="/template/commonTemplate.xhtml">
             <ui:define name="content">
                 <h1>Inicio</h1>
-                <h:form>
-                    <p:commandButton value="Buscar Datos" action="#{escritorioManagedBean.buscarDatos()}"/>
+                <h:form id="formBuscarDatos">
+                    <p:growl id="message" showDetail="true"/>
+                    <p:commandButton value="Buscar Datos" action="#{escritorioManagedBean.buscarDatos()}"
+                                     update=":formEscritorio, :formBuscarDatos:message"/>
                     <p:ajaxStatus style="width:16px;height:16px;float: left" id="ajaxStatusPanel">
                         <f:facet name="start">
                             <h:graphicImage value="/resources/img/ajax-loader.gif" />
@@ -20,6 +22,42 @@
                             <h:outputText value="" />
                         </f:facet>
                     </p:ajaxStatus>
+                </h:form><br/><br/>
+                
+                <h:form id="formEscritorio">
+                    <p:dashboard id="escritorio" model="#{escritorioManagedBean.model}">
+                        <p:panel id="proyectos" header="Mis proyectos" style="margin: 20px; width: 600px">
+                            <p:dataTable var="proyecto" value="#{escritorioManagedBean.equipos}">
+                                <p:column headerText="Nombre">
+                                    <h:outputLabel value="#{proyecto.idTablero.nombreTablero}" />
+                                </p:column>
+                                <p:column headerText="Cuenta" width="20%">
+                                    <h:outputLabel value="#{proyecto.idCuenta.idTipoCuenta.nombreTipoCuenta}" />
+                                </p:column>
+                                <p:column headerText="Email">
+                                    <h:outputLabel value="#{proyecto.idCuenta.emailCuenta}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                        
+                        <p:panel id="tareas" header="Mis tareas" style="margin: 20px; width: 600px">
+                            <p:dataTable var="tareas" value="#{escritorioManagedBean.tarjetas}">
+                                <p:column headerText="Proyecto">
+                                    <h:outputLabel value="#{tareas.idTablero.nombreTablero}" />
+                                </p:column>
+                                <p:column headerText="Nombre">
+                                    <h:outputLabel value="#{tareas.nombreTarjeta}" />
+                                </p:column>
+                                <p:column headerText="Etapa">
+                                    <h:outputLabel value="#{tareas.idLista.nombreLista}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                        
+                        <p:panel id="grafTareas" header="Resumen Tareas" style="margin: 20px; width: 480px">
+                            <p:chart type="pie" model="#{escritorioManagedBean.pieResumenTareas}" style="width:450px;height:300px" />
+                        </p:panel>
+                    </p:dashboard>
                 </h:form>
             </ui:define>
         </ui:composition>
