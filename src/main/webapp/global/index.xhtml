@@ -18,9 +18,6 @@
                         <f:facet name="start">
                             <h:graphicImage value="/resources/img/ajax-loader.gif" />
                         </f:facet>
-                        <f:facet name="complete">
-                            <h:outputText value="" />
-                        </f:facet>
                     </p:ajaxStatus>
                 </h:form><br/><br/>
                 
@@ -34,8 +31,8 @@
                                 <p:column headerText="Cuenta" width="20%">
                                     <h:outputLabel value="#{proyecto.idCuenta.idTipoCuenta.nombreTipoCuenta}" />
                                 </p:column>
-                                <p:column headerText="Email">
-                                    <h:outputLabel value="#{proyecto.idCuenta.emailCuenta}" />
+                                <p:column headerText="Tiempo">
+                                    <h:outputLabel value="#{escritorioManagedBean.obtenerTiempoProyecto(proyecto.idTablero.nombreTablero)}" />
                                 </p:column>
                             </p:dataTable>
                         </p:panel>
@@ -51,11 +48,21 @@
                                 <p:column headerText="Etapa">
                                     <h:outputLabel value="#{tareas.idLista.nombreLista}" />
                                 </p:column>
+                                <p:column headerText="Inicio">
+                                    <h:outputLabel value="#{escritorioManagedBean.formatFecha(tareas.fechaInicioTarjeta)}" />
+                                </p:column>
+                                <p:column headerText="Tiempo en proceso">
+                                    <h:outputLabel escape="false" value="#{escritorioManagedBean.obtenerTiempo(tareas.fechaInicioTarjeta)}" />
+                                </p:column>
                             </p:dataTable>
                         </p:panel>
                         
                         <p:panel id="grafTareas" header="Resumen Tareas" style="margin: 20px; width: 480px">
                             <p:chart type="pie" model="#{escritorioManagedBean.pieResumenTareas}" style="width:450px;height:300px" />
+                        </p:panel>
+                        
+                        <p:panel id="grafHorasTareas" header="Resumen Horas Tareas" style="margin: 20px; width: 480px">
+                            <p:chart type="pie" model="#{escritorioManagedBean.pieResumenHorasTareas}" style="width:450px;height:300px" />
                         </p:panel>
                     </p:dashboard>
                 </h:form>
