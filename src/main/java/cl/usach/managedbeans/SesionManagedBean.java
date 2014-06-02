@@ -8,15 +8,17 @@ package cl.usach.managedbeans;
 
 import cl.usach.entities.Usuario;
 import cl.usach.sessionbeans.UsuarioFacadeLocal;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -93,7 +95,6 @@ public class SesionManagedBean implements Serializable{
     public String getUser(){
         String login = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
         Usuario usuario = usuarioFacade.buscarPorLogin(login);
-        return usuario.getNombreUsuario();
-    }
-    
+        return usuario.getNombreUsuario();        
+    }    
 }

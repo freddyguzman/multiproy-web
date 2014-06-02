@@ -91,7 +91,7 @@
                                 <f:facet name="input">
                                     <h:inputText value="#{asignatura.creditoAsignatura}" style="width:100%"/>
                                 </f:facet>
-                            </p:cellEditor>						
+                            </p:cellEditor>				
                         </p:column>
                         <p:column headerText="Horas de Trabajo">
                             <p:cellEditor>
@@ -127,14 +127,19 @@
                             <h:outputText rendered="#{asignatura.cierreAsignatura == '0'}" value="No Cerrada" />
                             <h:outputText rendered="#{asignatura.cierreAsignatura == '1'}" value="Cerrada" />						
                         </p:column>
-                        <p:column style="width:6%" headerText="Acciones">  
+                        <p:column style="width:6%" headerText="Accion">  
                             <p:rowEditor ></p:rowEditor>
                             <p:commandLink id="btnConfEliminarAsignatura" update=":formAsignaturas:listaAsignatura,:formAsignaturas:messages"  action="#{asignaturaManagedBean.eliminarAsignatura()}"  title="Eliminar" >
                                 <span class="ui-icon ui-icon-trash"></span>
                                 <f:setPropertyActionListener value="#{asignatura}" target="#{asignaturaManagedBean.asignaturaSeleccionada}"/>
                                 <p:confirm header="Eliminar Asignatura" message="¿Esta seguro de eliminar esta asignatura?" icon="ui-icon-alert"/>
                             </p:commandLink>
-                        </p:column>                                            
+                        </p:column>
+                        <p:column headerText="Sprint" >
+                            <p:commandButton value="Sprints" onclick="PF('dlgSprints').show();" update=":formSprints" action="#{asignaturaManagedBean.buscarSprints()}">
+                                <f:setPropertyActionListener value="#{asignatura}" target="#{asignaturaManagedBean.asignaturaSeleccionada}" />
+                            </p:commandButton>
+                        </p:column>
 
                     </p:dataTable>
                     
@@ -142,7 +147,148 @@
                         <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>  
                         <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>       
                     </p:confirmDialog>
-                </h:form> 
+                </h:form>
+                
+                <p:dialog id="dialogoSprints" header="Sprints" widgetVar="dlgSprints" modal="true" width="80%" 
+                          position="top" style="margin-top: 50px">
+                    <h:form id="formSprints">
+                        <b><p:outputLabel value="#{asignaturaManagedBean.asignaturaSeleccionada.nombreAsignatura}" style="font-size: 16px" /></b><br/>
+                        <p:panel header="Nuevo Sprint" widgetVar="pnlNuevoSprint">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column><p:outputLabel for="nombreSprintAsignatura" value="Nombre Sprint" /></p:column>
+                                    <p:column><p:inputText id="nombreSprintAsignatura" value="#{asignaturaManagedBean.nombreSprintAsignatura}" /></p:column> 
+                                    <p:column><p:outputLabel for="fechaInicioAsig" value="Fecha Inicio:" /></p:column>
+                                    <p:column><p:calendar id="fechaInicioAsig" 
+                                                          value="#{asignaturaManagedBean.fechaInicioSprintAsignatura}" 
+                                                          pattern="dd/MM/yyyy HH:mm:ss" /></p:column>
+                                    <p:column><p:outputLabel for="fechaTerminoAsig" value="Fecha Termino" /></p:column>
+                                    <p:column><p:calendar id="fechaTerminoAsig" 
+                                                          value="#{asignaturaManagedBean.fechaTerminoSprintAsignatura}" 
+                                                          pattern="dd/MM/yyyy HH:mm:ss" /></p:column>                          
+                                </p:row>
+                                <p:row>
+                                    <p:column><p:outputLabel for="descripcionSprintAsignatura" value="Descripción Sprint" /></p:column>
+                                    <p:column colspan="4"><p:inputTextarea maxlength="200" style="width: 90%" id="descripcionSprintAsignatura" value="#{asignaturaManagedBean.descripcionSprintAsignatura}" /></p:column>
+                                    <p:column><p:commandButton value="Nuevo Sprints" 
+                                                               action="#{asignaturaManagedBean.nuevoSprintAsignaturas(asignaturaManagedBean.asignaturaSeleccionada)}"
+                                                               update=":formSprints,:formAsignaturas:messages"/></p:column>
+                                </p:row>
+                                
+                            </p:panelGrid>
+                            
+                        </p:panel>
+                        <br/><br/>
+                        <p:separator />
+                         <br/><br/>
+                        <p:tabView value="#{asignaturaManagedBean.sprintsAsignatura}" var="sprintA" >
+                            <p:tab title="Sprint - #{sprintA.nombreSprintAsignatura}">
+                                <p:commandButton type="submit" value="Nuevo Grupo Sprint" onclick="PF('dlgNuevoSprintGrupo').show();">
+                                    <f:setPropertyActionListener value="#{sprintA}" 
+                                                                 target="#{asignaturaManagedBean.sprintAsignaturaSeleccionado}"/>
+                                </p:commandButton>
+                                <p:commandButton type="submit" value="Editar Sprint" onclick="PF('dlgEditarSprintAsignatura').show()"
+                                                 update=":formEditarSprintAsignatura">
+                                    <f:setPropertyActionListener value="#{sprintA}" target="#{asignaturaManagedBean.sprintAsignaturaSeleccionado}"/>
+                                </p:commandButton>
+                                <p:commandButton value="Eliminar Sprint" action="#{asignaturaManagedBean.eliminarSprintAsignatura(sprintA)}"
+                                                update=":formSprints,:formAsignaturas:messages">
+                                   <p:confirm header="Eliminar Sprint Asignatura" message="¿Esta seguro de eliminar este sprint de esta asignatura?" icon="ui-icon-alert"/>
+                                </p:commandButton><br/><br/>
+                                
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column><h:outputLabel value="Fecha Inicio " style="font-weight: bold"/></p:column>
+                                        <p:column><h:outputLabel value="#{asignaturaManagedBean.formatoFecha(sprintA.fechaInicioSprintAsignatura)}"/></p:column>
+                                    
+                                        <p:column><h:outputLabel value="Fecha Término " style="font-weight: bold"/></p:column>
+                                        <p:column><h:outputLabel value="#{asignaturaManagedBean.formatoFecha(sprintA.fechaTerminoSprintAsignatura)}"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column><h:outputLabel value="Descripción " style="font-weight: bold"/></p:column>
+                                        <p:column colspan="3"><h:outputText value="#{sprintA.descripcionSprintAsignatura}" /></p:column>
+                                    </p:row>
+                                </p:panelGrid>                               
+                                <p:dataTable value="#{asignaturaManagedBean.buscarSprintGrupos(sprintA)}" var="sprintG">
+
+                                    <p:column headerText="Nombre">                                        
+                                        <h:outputText value="#{sprintG.nombreSprintGrupo}" />                                        				
+                                    </p:column>
+                                    <p:column headerText="Objetivo Tecnico">                                        
+                                        <h:outputText value="#{sprintG.objetivoTecnicoSprintGrupo}" />                                        				
+                                    </p:column>
+                                    <p:column headerText="Objetivo Usuario">                                        
+                                        <h:outputText value="#{sprintG.objetivoUsuarioSprintGrupo}" />                                        				
+                                    </p:column>
+                                    <p:column headerText="Scrum Master">                                        
+                                        <h:outputText value="#{sprintG.idUsuario.nombreUsuario}" />                                        				
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                        </p:tabView>
+                    </h:form>
+                </p:dialog>
+                
+                <p:dialog header="Nuevo Sprint Grupo" widgetVar="dlgNuevoSprintGrupo" modal="true">  
+                    <h:form id="formAgregarSprintGrupo">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel for="nombreSprintGrupo" value="Nombre Sprint Grupo" />
+                            <p:inputText id="nombreSprintGrupo" value="#{asignaturaManagedBean.nombreSprintGrupo}" required="true"/>
+
+                            <p:outputLabel for="ObjetivoTSprintGrupo" value="Objetivo Tecnico" />
+                            <p:inputText id="ObjetivoTSprintGrupo" value="#{asignaturaManagedBean.objetivoTecnicoSprintGrupo}"/>
+
+                            <p:outputLabel for="ObjetivoUSprintGrupo" value="Objetivo Usuario" />
+                            <p:inputText id="ObjetivoUSprintGrupo" value="#{asignaturaManagedBean.objetivoUsuarioSprintGrupo}"/>
+
+                            <p:outputLabel value="Scrum Muster" />
+
+                            <p:selectOneMenu value="#{asignaturaManagedBean.usuarioAlumnoSeleccionado}" converter="usuarioConverter"
+                                             var="usuAlum" filter="true" filterMatchMode="contains" >
+                                <f:selectItems value="#{asignaturaManagedBean.usuariosAlumnos}" var="ua" itemLabel="#{ua.nombreUsuario}"
+                                               itemValue="#{ua}" />
+                                <p:column>
+                                    <h:outputText value="#{usuAlum.nombreUsuario}" />
+                                </p:column>
+                            </p:selectOneMenu>        
+                        </h:panelGrid>
+                        <p:commandButton value="Nuevo Grupo Sprint"
+                                         update=":formSprints,:formAsignaturas:messages" oncomplete="PF('dlgNuevoSprintGrupo').hide();"
+                                             action="#{asignaturaManagedBean.nuevoSprintGrupo(asignaturaManagedBean.sprintAsignaturaSeleccionado)}"/>
+                        <p:commandButton value="Cancelar" action="#{asignaturaManagedBean.limpiarDatos()}" 
+                                         update=":formAgregarSprintGrupo" oncomplete="PF('dlgNuevoSprintGrupo').hide();"/>
+                    </h:form>
+                </p:dialog>
+                
+                <p:dialog header="Editar Sprint Asignatura" widgetVar="dlgEditarSprintAsignatura" modal="true" width="600px">  
+                    <h:form id="formEditarSprintAsignatura">
+                        <h:panelGrid columns="2"  style="width: 100%">
+                            <p:outputLabel for="nombreSprintAsignatura" value="Nombre Sprint Asignatura" />
+                            <p:inputText id="nombreSprintAsignatura" 
+                                         value="#{asignaturaManagedBean.sprintAsignaturaSeleccionado.nombreSprintAsignatura}" required="true"/>
+
+                            <p:outputLabel for="fechaInicioAsignatura" value="Fecha Inicio" />
+                            <p:calendar id="fechaInicioAsignatura" 
+                                        value="#{asignaturaManagedBean.sprintAsignaturaSeleccionado.fechaInicioSprintAsignatura}" 
+                                        pattern="dd/MM/yyyy HH:mm:ss" />
+
+                            <p:outputLabel for="fechaTerminoAsignatura" value="Fecha Término" />
+                            <p:calendar id="fechaTerminoAsignatura" 
+                                        value="#{asignaturaManagedBean.sprintAsignaturaSeleccionado.fechaTerminoSprintAsignatura}" 
+                                        pattern="dd/MM/yyyy HH:mm:ss" />
+                            
+                            <p:outputLabel for="descripcionAsignatura" value="Descripción" />
+                            <p:inputTextarea id="descripcionAsignatura" 
+                                             value="#{asignaturaManagedBean.sprintAsignaturaSeleccionado.descripcionSprintAsignatura}"
+                                             maxlength="200" style="width: 100%"/>                                  
+                        </h:panelGrid>
+                        <p:commandButton value="Editar Sprint Asignatura"
+                                         update=":formSprints,:formAsignaturas:messages" oncomplete="PF('dlgEditarSprintAsignatura').hide();"
+                                         action="#{asignaturaManagedBean.editarSprintAsignatura()}"/>
+                        <p:commandButton value="Cancelar" action="#{asignaturaManagedBean.limpiarDatos()}" 
+                                         update=":formEditarSprintAsignatura" oncomplete="PF('dlgEditarSprintAsignatura').hide();"/>
+                    </h:form>
+                </p:dialog>
                 
             </ui:define>
             
