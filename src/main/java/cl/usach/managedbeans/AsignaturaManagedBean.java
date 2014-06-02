@@ -78,6 +78,7 @@ public class AsignaturaManagedBean {
     private String objetivoTecnicoSprintGrupo;
     private String objetivoUsuarioSprintGrupo;
     private Usuario idUsuarioSprintGrupo;
+    private SprintGrupos sprintGrupoSeleccionado;
     
     private List<Usuario> usuariosAlumnos;
     private Usuario usuarioAlumnoSeleccionado;
@@ -158,6 +159,7 @@ public class AsignaturaManagedBean {
         sprintAsignaturaFacade.edit(sprintAsignaturaSeleccionado);
         FacesMessage msg = new FacesMessage("Sprint Editado","");  
         FacesContext.getCurrentInstance().addMessage(null, msg);
+        limpiarDatos();
     }
     
     public void eliminarSprintAsignatura(SprintAsignatura sprintA){
@@ -204,6 +206,19 @@ public class AsignaturaManagedBean {
         objetivoTecnicoSprintGrupo = null;
         objetivoUsuarioSprintGrupo = null;
         idUsuarioSprintGrupo = null;
+    }
+    
+    public void eliminarSprintGrupo(){
+        sprintGruposFacade.remove(sprintGrupoSeleccionado);
+        FacesMessage msg = new FacesMessage("Sprint Grupo Eliminado", sprintGrupoSeleccionado.getNombreSprintGrupo());
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
+    
+    public void editarSprintGrupo(){
+        sprintGruposFacade.edit(sprintGrupoSeleccionado);
+        FacesMessage msg = new FacesMessage("Sprint Grupo Editado",sprintGrupoSeleccionado.getNombreSprintGrupo());  
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+        limpiarDatos();
     }
     
     public String formatoFecha(Date fecha){
@@ -419,6 +434,14 @@ public class AsignaturaManagedBean {
 
     public void setUsuarioAlumnoSeleccionado(Usuario usuarioAlumnoSeleccionado) {
         this.usuarioAlumnoSeleccionado = usuarioAlumnoSeleccionado;
+    }
+
+    public SprintGrupos getSprintGrupoSeleccionado() {
+        return sprintGrupoSeleccionado;
+    }
+
+    public void setSprintGrupoSeleccionado(SprintGrupos sprintGrupoSeleccionado) {
+        this.sprintGrupoSeleccionado = sprintGrupoSeleccionado;
     }
     
 }

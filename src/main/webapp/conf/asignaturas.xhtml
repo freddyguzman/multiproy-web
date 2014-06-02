@@ -150,9 +150,9 @@
                 </h:form>
                 
                 <p:dialog id="dialogoSprints" header="Sprints" widgetVar="dlgSprints" modal="true" width="80%" 
-                          position="top" style="margin-top: 50px">
+                          position="top" resizable="false">
                     <h:form id="formSprints">
-                        <b><p:outputLabel value="#{asignaturaManagedBean.asignaturaSeleccionada.nombreAsignatura}" style="font-size: 16px" /></b><br/>
+                        <b><p:outputLabel value="#{asignaturaManagedBean.asignaturaSeleccionada.nombreAsignatura}" style="font-size: 24px" /></b><br/>
                         <p:panel header="Nuevo Sprint" widgetVar="pnlNuevoSprint">
                             <p:panelGrid>
                                 <p:row>
@@ -188,11 +188,11 @@
                                                                  target="#{asignaturaManagedBean.sprintAsignaturaSeleccionado}"/>
                                 </p:commandButton>
                                 <p:commandButton type="submit" value="Editar Sprint" onclick="PF('dlgEditarSprintAsignatura').show()"
-                                                 update=":formEditarSprintAsignatura">
+                                                 update=":formEditarSprintAsignatura" icon="ui-icon-pencil">
                                     <f:setPropertyActionListener value="#{sprintA}" target="#{asignaturaManagedBean.sprintAsignaturaSeleccionado}"/>
                                 </p:commandButton>
                                 <p:commandButton value="Eliminar Sprint" action="#{asignaturaManagedBean.eliminarSprintAsignatura(sprintA)}"
-                                                update=":formSprints,:formAsignaturas:messages">
+                                                update=":formSprints,:formAsignaturas:messages" icon="ui-icon-trash">
                                    <p:confirm header="Eliminar Sprint Asignatura" message="¿Esta seguro de eliminar este sprint de esta asignatura?" icon="ui-icon-alert"/>
                                 </p:commandButton><br/><br/>
                                 
@@ -223,13 +223,26 @@
                                     <p:column headerText="Scrum Master">                                        
                                         <h:outputText value="#{sprintG.idUsuario.nombreUsuario}" />                                        				
                                     </p:column>
+                                    <p:column headerText="Acción" width="6%">
+                                        <p:commandLink id="btnConfEditarSprintGrupo" update=":formEditarSprintGrupo"
+                                                       onclick="PF('dlgEditarSprintGrupo').show();" title="Editar" >
+                                            <span class="ui-icon ui-icon-pencil"></span>
+                                            <f:setPropertyActionListener value="#{sprintG}" target="#{asignaturaManagedBean.sprintGrupoSeleccionado}"/>
+                                        </p:commandLink>
+                                        <p:commandLink id="btnConfEliminarSprintGrupo" update=":formSprints,:formAsignaturas:messages" 
+                                                       action="#{asignaturaManagedBean.eliminarSprintGrupo()}"  title="Eliminar" >
+                                            <span class="ui-icon ui-icon-trash"></span>
+                                            <f:setPropertyActionListener value="#{sprintG}" target="#{asignaturaManagedBean.sprintGrupoSeleccionado}"/>
+                                            <p:confirm header="Eliminar Sprint Grupo" message="¿Esta seguro de eliminar este Sprint de grupo?" icon="ui-icon-alert"/>
+                                        </p:commandLink>                                        
+                                    </p:column>dlgEditarSprintGrupo
                                 </p:dataTable>
                             </p:tab>
                         </p:tabView>
                     </h:form>
                 </p:dialog>
                 
-                <p:dialog header="Nuevo Sprint Grupo" widgetVar="dlgNuevoSprintGrupo" modal="true">  
+                <p:dialog header="Nuevo Sprint Grupo" widgetVar="dlgNuevoSprintGrupo" modal="true" resizable="false">  
                     <h:form id="formAgregarSprintGrupo">
                         <h:panelGrid columns="2">
                             <p:outputLabel for="nombreSprintGrupo" value="Nombre Sprint Grupo" />
@@ -253,14 +266,14 @@
                             </p:selectOneMenu>        
                         </h:panelGrid>
                         <p:commandButton value="Nuevo Grupo Sprint"
-                                         update=":formSprints,:formAsignaturas:messages" oncomplete="PF('dlgNuevoSprintGrupo').hide();"
+                                         update=":formSprints,:formAsignaturas:messages,:formAgregarSprintGrupo" oncomplete="PF('dlgNuevoSprintGrupo').hide();"
                                              action="#{asignaturaManagedBean.nuevoSprintGrupo(asignaturaManagedBean.sprintAsignaturaSeleccionado)}"/>
                         <p:commandButton value="Cancelar" action="#{asignaturaManagedBean.limpiarDatos()}" 
                                          update=":formAgregarSprintGrupo" oncomplete="PF('dlgNuevoSprintGrupo').hide();"/>
                     </h:form>
                 </p:dialog>
                 
-                <p:dialog header="Editar Sprint Asignatura" widgetVar="dlgEditarSprintAsignatura" modal="true" width="600px">  
+                <p:dialog header="Editar Sprint Asignatura" widgetVar="dlgEditarSprintAsignatura" modal="true" width="600px" resizable="false">  
                     <h:form id="formEditarSprintAsignatura">
                         <h:panelGrid columns="2"  style="width: 100%">
                             <p:outputLabel for="nombreSprintAsignatura" value="Nombre Sprint Asignatura" />
@@ -287,6 +300,39 @@
                                          action="#{asignaturaManagedBean.editarSprintAsignatura()}"/>
                         <p:commandButton value="Cancelar" action="#{asignaturaManagedBean.limpiarDatos()}" 
                                          update=":formEditarSprintAsignatura" oncomplete="PF('dlgEditarSprintAsignatura').hide();"/>
+                    </h:form>
+                </p:dialog>
+                
+                <p:dialog header="Editar Sprint Grupo" widgetVar="dlgEditarSprintGrupo" modal="true" width="600px" resizable="false">  
+                    <h:form id="formEditarSprintGrupo">
+                        <h:panelGrid columns="2"  style="width: 100%">
+                            <p:outputLabel for="nombreSprintGrupo" value="Nombre Sprint Grupo" />
+                            <p:inputText id="nombreSprintGrupo" 
+                                         value="#{asignaturaManagedBean.sprintGrupoSeleccionado.nombreSprintGrupo}" required="true"/>
+
+                            <p:outputLabel for="ObjetivoTSprintGrupo" value="Objetivo Tecnico" />
+                            <p:inputText id="ObjetivoTSprintGrupo" 
+                                         value="#{asignaturaManagedBean.sprintGrupoSeleccionado.objetivoTecnicoSprintGrupo}"/>
+
+                            <p:outputLabel for="ObjetivoUSprintGrupo" value="Objetivo Usuario" />
+                            <p:inputText id="ObjetivoUSprintGrupo" 
+                                         value="#{asignaturaManagedBean.sprintGrupoSeleccionado.objetivoUsuarioSprintGrupo}"/>
+
+                            <p:outputLabel value="Scrum Muster" />
+                            <p:selectOneMenu value="#{asignaturaManagedBean.sprintGrupoSeleccionado.idUsuario}" converter="usuarioConverter"
+                                             var="usuAlum" filter="true" filterMatchMode="contains" >
+                                <f:selectItems value="#{asignaturaManagedBean.usuariosAlumnos}" var="ua" itemLabel="#{ua.nombreUsuario}"
+                                               itemValue="#{ua}" />
+                                <p:column>
+                                    <h:outputText value="#{usuAlum.nombreUsuario}" />
+                                </p:column>
+                            </p:selectOneMenu>        
+                        </h:panelGrid>
+                        <p:commandButton value="Editar Grupo Sprint"
+                                         update=":formSprints,:formAsignaturas:messages,:formEditarSprintGrupo" oncomplete="PF('dlgEditarSprintGrupo').hide();"
+                                         action="#{asignaturaManagedBean.editarSprintGrupo()}"/>
+                        <p:commandButton value="Cancelar" action="#{asignaturaManagedBean.limpiarDatos()}" 
+                                         update=":formEditarSprintGrupo" oncomplete="PF('dlgEditarSprintGrupo').hide();"/>
                     </h:form>
                 </p:dialog>
                 
