@@ -157,7 +157,8 @@
                             <p:panelGrid>
                                 <p:row>
                                     <p:column><p:outputLabel for="nombreSprintAsignatura" value="Nombre Sprint" /></p:column>
-                                    <p:column><p:inputText id="nombreSprintAsignatura" value="#{asignaturaManagedBean.nombreSprintAsignatura}" /></p:column> 
+                                    <p:column><p:inputText id="nombreSprintAsignatura" value="#{asignaturaManagedBean.nombreSprintAsignatura}" 
+                                                           /></p:column> 
                                     <p:column><p:outputLabel for="fechaInicioAsig" value="Fecha Inicio:" /></p:column>
                                     <p:column><p:calendar id="fechaInicioAsig" 
                                                           value="#{asignaturaManagedBean.fechaInicioSprintAsignatura}" 
@@ -165,7 +166,7 @@
                                     <p:column><p:outputLabel for="fechaTerminoAsig" value="Fecha Termino" /></p:column>
                                     <p:column><p:calendar id="fechaTerminoAsig" 
                                                           value="#{asignaturaManagedBean.fechaTerminoSprintAsignatura}" 
-                                                          pattern="dd/MM/yyyy HH:mm:ss" /></p:column>                          
+                                                          pattern="dd/MM/yyyy HH:mm:ss"  /></p:column>                          
                                 </p:row>
                                 <p:row>
                                     <p:column><p:outputLabel for="descripcionSprintAsignatura" value="Descripción Sprint" /></p:column>
@@ -183,7 +184,8 @@
                          <br/><br/>
                         <p:tabView value="#{asignaturaManagedBean.sprintsAsignatura}" var="sprintA" >
                             <p:tab title="Sprint - #{sprintA.nombreSprintAsignatura}">
-                                <p:commandButton type="submit" value="Nuevo Grupo Sprint" onclick="PF('dlgNuevoSprintGrupo').show();">
+                                <p:commandButton type="submit" value="Nuevo Grupo Sprint" onclick="PF('dlgNuevoSprintGrupo').show();"
+                                                 update=":formAgregarSprintGrupo">
                                     <f:setPropertyActionListener value="#{sprintA}" 
                                                                  target="#{asignaturaManagedBean.sprintAsignaturaSeleccionado}"/>
                                 </p:commandButton>
@@ -235,7 +237,7 @@
                                             <f:setPropertyActionListener value="#{sprintG}" target="#{asignaturaManagedBean.sprintGrupoSeleccionado}"/>
                                             <p:confirm header="Eliminar Sprint Grupo" message="¿Esta seguro de eliminar este Sprint de grupo?" icon="ui-icon-alert"/>
                                         </p:commandLink>                                        
-                                    </p:column>dlgEditarSprintGrupo
+                                    </p:column>
                                 </p:dataTable>
                             </p:tab>
                         </p:tabView>

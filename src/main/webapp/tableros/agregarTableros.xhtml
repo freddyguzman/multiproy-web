@@ -25,25 +25,25 @@
                     <p:growl id="messages" showDetail="true"/> 
                     
                     <p:dataTable id="dataTableTableros" var="equipo" value="#{tableroManagedBean.equipos}" editable="true">
-                        <p:column headerText="Cuenta">
+                        <p:column headerText="Cuenta" width="10%">
                             <h:outputLabel value="#{equipo.idCuenta.idTipoCuenta.nombreTipoCuenta}" />
                         </p:column>
-                        <p:column headerText="Email Cuenta">
+                        <p:column headerText="Email Cuenta" width="15%">
                             <h:outputLabel value="#{equipo.idCuenta.emailCuenta}" />
                         </p:column>
-                        <p:column headerText="Nombre">
+                        <p:column headerText="Nombre" width="10%">
                             <h:outputLabel value="#{equipo.idTablero.nombreTablero}" />
                         </p:column>
-                        <p:column headerText="URL">
-                            <h:outputLabel value="#{equipo.idTablero.urlTablero}" />
+                        <p:column headerText="Asignatura" width="20%">
+                            <h:outputLabel value="#{tableroManagedBean.buscarAsignatura(equipo)}" />
                         </p:column>
-                        <p:column headerText="Estado" >
+                        <p:column headerText="Estado" width="7%">
                             <p:graphicImage rendered="#{tableroManagedBean.existeEquipo(equipo)}"
                                             value="/resources/img/258-checkmark.png" title="Agregado"/>
                             <p:graphicImage rendered="#{!tableroManagedBean.existeEquipo(equipo)}"
                                             value="/resources/img/298-circlex.png" title="No agregado" />
                         </p:column>
-                        <p:column>
+                        <p:column width="20%">
                             <p:commandButton rendered="#{!tableroManagedBean.existeEquipo(equipo)}" value="Agregar Tablero" 
                                              type="submit" action="#{tableroManagedBean.nuevoTablero}" 
                                              update=":formAgregarTablero:messages,:formAgregarTablero:dataTableTableros">
@@ -51,9 +51,14 @@
                             </p:commandButton>
                             <p:commandButton rendered="#{tableroManagedBean.existeEquipo(equipo)}" value="Eliminar Tablero" 
                                              type="submit" action="#{tableroManagedBean.eliminarTablero()}"
-                                             update=":formAgregarTablero:messages,:formAgregarTablero:dataTableTableros">
+                                             update=":formAgregarTablero:messages,:formAgregarTablero">
                                 <f:setPropertyActionListener value="#{equipo}" target="#{tableroManagedBean.equipoSeleccionado}" />
                                 <p:confirm header="Eliminar Tablero" message="¿Esta seguro de eliminar este tablero?" icon="ui-icon-alert"/>
+                            </p:commandButton>
+                            <p:commandButton rendered="#{tableroManagedBean.verificarTableroyScrumMaster(equipo)}" value="Asignar Asignatura" update=":formAsignarAsignaturas"
+                                             type="submit" oncomplete="PF('dlgAsignarAsignatura').show();" 
+                                             action="#{tableroManagedBean.buscarTableroReal()}">
+                                <f:setPropertyActionListener value="#{equipo}" target="#{tableroManagedBean.equipoSeleccionado}"/>
                             </p:commandButton>
                         </p:column>
                     </p:dataTable>
@@ -63,6 +68,22 @@
                         <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>       
                     </p:confirmDialog>
                 </h:form>
+                
+                <p:dialog header="Asignar Asignaturas" widgetVar="dlgAsignarAsignatura" modal="true" resizable="false">
+                    <h:form id="formAsignarAsignaturas">
+                        <h2><p:outputLabel value="#{tableroManagedBean.equipoSeleccionado.idTablero.nombreTablero}" /></h2>
+                        <p:selectOneMenu value="#{tableroManagedBean.idSprintGrupoSeleccionado}">
+                            <f:selectItem itemLabel="Sin Asignar" itemValue="-1"/>
+                            <f:selectItems value="#{tableroManagedBean.buscarSprintsGruposPorUsuario()}" var="sg"
+                                           itemValue="#{sg.idSprintGrupo}"
+                                           itemLabel="#{sg.idSprintAsignatura.idAsignatura.nombreAsignatura} / #{sg.idSprintAsignatura.nombreSprintAsignatura} / #{sg.nombreSprintGrupo}"/>
+                        </p:selectOneMenu>
+                        <br/><br/>
+                        <p:commandButton value="Asignar" oncomplete="PF('dlgAsignarAsignatura').hide();"
+                                         action="#{tableroManagedBean.asignarAsignatura(tableroManagedBean.equipoSeleccionado)}" update=":formAgregarTablero"/>
+                        <p:commandButton value="Cancelar" oncomplete="PF('dlgAsignarAsignatura').hide();"/>
+                    </h:form>
+                </p:dialog>
             </ui:define>
         </ui:composition>
     </body>

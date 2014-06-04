@@ -8,14 +8,11 @@ package cl.usach.managedbeans;
 
 import cl.usach.entities.Usuario;
 import cl.usach.sessionbeans.UsuarioFacadeLocal;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;

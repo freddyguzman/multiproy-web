@@ -145,14 +145,20 @@ public class AsignaturaManagedBean {
     }
     
     public void nuevoSprintAsignaturas(Asignatura asig){
-        SprintAsignatura sprintA = new SprintAsignatura(nombreSprintAsignatura, 
+        if(nombreAsignatura != null && fechaInicioSprintAsignatura != null && fechaTerminoSprintAsignatura != null){
+            SprintAsignatura sprintA = new SprintAsignatura(nombreSprintAsignatura, 
                 descripcionSprintAsignatura, fechaInicioSprintAsignatura, 
                 fechaTerminoSprintAsignatura, asig);
-        sprintAsignaturaFacade.create(sprintA);
-        FacesMessage msg = new FacesMessage("Sprint Agregado",nombreAsignatura);  
-        FacesContext.getCurrentInstance().addMessage(null, msg);
+            sprintAsignaturaFacade.create(sprintA);
+            FacesMessage msg = new FacesMessage("Sprint Agregado",nombreAsignatura);  
+            FacesContext.getCurrentInstance().addMessage(null, msg);            
+            limpiarDatos();
+        }else{
+            FacesMessage msg = new FacesMessage("Ingrese datos validos");  
+            FacesContext.getCurrentInstance().addMessage(null, msg); 
+        }
+        
         buscarSprints();
-        limpiarDatos();
     }
     
     public void editarSprintAsignatura(){
@@ -170,7 +176,7 @@ public class AsignaturaManagedBean {
     }
     
     public void buscarDatosEditarSprintAsigntarua(){
-        System.out.println("asdasd");
+        System.out.println("asadsd " + sprintAsignaturaSeleccionado);
     }
     
     public List<SprintGrupos> buscarSprintGrupos(SprintAsignatura sprintA){
@@ -186,11 +192,11 @@ public class AsignaturaManagedBean {
     public void nuevoSprintGrupo(SprintAsignatura sprintA){
         SprintGrupos springG = new SprintGrupos(nombreSprintGrupo,
              objetivoTecnicoSprintGrupo, objetivoUsuarioSprintGrupo, usuarioAlumnoSeleccionado, sprintA);
-
-         sprintGruposFacade.create(springG);
-         FacesMessage msg = new FacesMessage("Sprint Grupo Agregado", springG.getNombreSprintGrupo());
-         FacesContext.getCurrentInstance().addMessage(null, msg);
-         limpiarDatos();
+        
+        sprintGruposFacade.create(springG);
+        FacesMessage msg = new FacesMessage("Sprint Grupo Agregado", springG.getNombreSprintGrupo());
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+        limpiarDatos();
     }
     
     public void limpiarDatos(){

@@ -7,9 +7,11 @@
 package cl.usach.managedbeans;
 
 import cl.usach.entities.Equipo;
+import cl.usach.entities.Tablero;
 import cl.usach.entities.Tarjeta;
 import cl.usach.entities.Usuario;
 import cl.usach.sessionbeans.EquipoFacadeLocal;
+import cl.usach.sessionbeans.TableroFacadeLocal;
 import cl.usach.sessionbeans.TarjetaFacadeLocal;
 import cl.usach.sessionbeans.UsuarioFacadeLocal;
 import java.text.ParseException;
@@ -25,8 +27,8 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+import javax.faces.view.ViewScoped;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.DurationFieldType;
@@ -40,24 +42,25 @@ import org.primefaces.model.chart.LineChartModel;
  *
  * @author FGT
  */
-@Named(value = "graficoManagedBean")
+@Named(value = "graficosAsignaturaManagedBean")
 @ViewScoped
-public class GraficoManagedBean {
+public class GraficosAsignaturaManagedBean {
+    @EJB
+    private TableroFacadeLocal tableroFacade;
+
     @EJB
     private TarjetaFacadeLocal tarjetaFacade;
     @EJB
-    private EquipoFacadeLocal equipoFacade;
-    @EJB
     private UsuarioFacadeLocal usuarioFacade;
 
-    private List<Equipo> equipos; 
+    private List<Tablero> tableros; 
     
     private final String loginUsuario = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
     
     private final SesionManagedBean sesionManagedBean = new SesionManagedBean();
     
-    public GraficoManagedBean() {
+    public GraficosAsignaturaManagedBean() {
     }
     
     @PostConstruct
@@ -65,22 +68,22 @@ public class GraficoManagedBean {
         buscarProjectos();
     }
     
-    public List<Equipo> getEquipos() {
-        return equipos;
+    public List<Tablero> getTableros() {
+        return tableros;
     }
 
-    public void setEquipos(List<Equipo> equipos) {
-        this.equipos = equipos;
+    public void setTableros(List<Tablero> tableros) {
+        this.tableros = tableros;
     }
    
     public void buscarProjectos(){
         Usuario usuario = usuarioFacade.buscarPorLogin(loginUsuario);
-        equipos = equipoFacade.buscarPorUsuario(usuario);
+        tableros = tableroFacade.buscarPorProfesor(usuario);
     }
     
-    public LineChartModel crearGraficos(Equipo equipo){
-        LineChartModel lineModelAux = buscarDatosGraficos(equipo);
-        lineModelAux.setTitle(equipo.getIdTablero().getNombreTablero());
+    public LineChartModel crearGraficos(Tablero tablero){
+        LineChartModel lineModelAux = buscarDatosGraficos(tablero);
+        lineModelAux.setTitle(tablero.getNombreTablero());
         lineModelAux.setLegendPosition("e");
         lineModelAux.setShowPointLabels(true);
         lineModelAux.getAxes().put(AxisType.X, new CategoryAxis("Días"));
@@ -90,18 +93,12 @@ public class GraficoManagedBean {
         return lineModelAux;
     }
     
-    public LineChartModel buscarDatosGraficos(Equipo equipo){
-        List<Tarjeta> tarjetas = tarjetaFacade.buscarPorTablero(equipo.getIdTablero());
+    public LineChartModel buscarDatosGraficos(Tablero tablero){
+        List<Tarjeta> tarjetas = tarjetaFacade.buscarPorTablero(tablero);
         LineChartModel model = new LineChartModel();
         Collections.sort(tarjetas);
-        Map<String,Number> valores;
-        if(equipo.getIdTablero().getIdSprintGrupo() != null){
-            valores = inicializarMAP(equipo.getIdTablero().getIdSprintGrupo().getIdSprintAsignatura().getFechaInicioSprintAsignatura(),
-                equipo.getIdTablero().getIdSprintGrupo().getIdSprintAsignatura().getFechaTerminoSprintAsignatura());
-        }else{
-            valores = inicializarMAP(tarjetas.get(0).getFechaCreacionTarjeta(), new Date());
-        }
-        
+        Map<String,Number> valores = inicializarMAP(tablero.getIdSprintGrupo().getIdSprintAsignatura().getFechaInicioSprintAsignatura(),
+                tablero.getIdSprintGrupo().getIdSprintAsignatura().getFechaTerminoSprintAsignatura());
         if(valores != null){
             for (Tarjeta tarjeta : tarjetas) {           
                 for (Map.Entry<String, Number> valor : valores.entrySet()) {                
@@ -136,10 +133,9 @@ public class GraficoManagedBean {
                 else if (i == (valoresGraf.size()-1)) {
                     serie2.set(fechaAux, 0);
                 }
-                
+              
                 i++;
-            }
-            
+            }            
             model.addSeries(serie1);
             model.addSeries(serie2);
         }

@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+    <h:body>
+        <ui:composition template="/template/commonTemplate.xhtml">
+            <ui:define name="content">
+                <h1>Créditos</h1>
+                <h:form>
+                    <p:tabView value="#{creditosManagedBean.asignaturas}" var="asignatura" orientation="left">
+                        <p:tab title="#{asignatura.nombreAsignatura} - #{asignatura.semestreAsignatura}S #{asignatura.anoAsignatura}">
+                            
+                            <p:tabView value="#{creditosManagedBean.buscarSprintAsignaturas(asignatura)}" var="sprintA">
+                                <p:tab title="Sprint - #{sprintA.nombreSprintAsignatura}">
+                                    <h3><h:outputLabel value="#{sprintA.nombreSprintAsignatura}"/></h3>
+                                    <p:panel>
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column style="background-color: #f5f5f5"><h:outputLabel value="Fecha Inicio:"/></p:column>
+                                                <p:column><h:outputLabel 
+                                                        value="#{creditosManagedBean.formatFecha(sprintA.fechaInicioSprintAsignatura)}"/></p:column>
+                                                <p:column style="background-color: #f5f5f5"><h:outputLabel value="Fecha Final:"/></p:column>
+                                                <p:column><h:outputLabel 
+                                                        value="#{creditosManagedBean.formatFecha(sprintA.fechaTerminoSprintAsignatura)}"/></p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="background-color: #f5f5f5"><h:outputLabel value="Promedio:"/></p:column>
+                                                <p:column><h:outputLabel 
+                                                        value="#{creditosManagedBean.buscarPromedioSprintAsignatura(sprintA)}"/></p:column>
+                                                <p:column style="background-color: #f5f5f5"><h:outputLabel value="Desviación estandar:"/></p:column>
+                                                <p:column><h:outputLabel 
+                                                        value="#{creditosManagedBean.buscarDesviacionEstandarSprintAsignatura(sprintA)}"/></p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:panel>
+                                    
+                                    <p:dataGrid columns="2" value="#{creditosManagedBean.buscarSprintGrupos(sprintA)}" var="sprintG">
+                                        <f:facet name="header">
+                                            Sprint de Grupos
+                                        </f:facet>
+                                        
+                                        <p:panel header="#{sprintG.nombreSprintGrupo}">
+                                            
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column style="background-color: #f5f5f5"><h:outputLabel value="Promedio"/></p:column>
+                                                    <p:column><h:outputLabel value="#{creditosManagedBean.buscarPromedioSrpintGrupo(sprintG)}" /></p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="background-color: #f5f5f5"><h:outputLabel value="Desviación estandar" /></p:column>
+                                                    <p:column><h:outputLabel value="#{creditosManagedBean.buscarDesviacionStandarSrpintGrupo(sprintG)}" /></p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                                                                        
+                                            <p:dataTable value="#{creditosManagedBean.buscarEquipos(sprintG)}" var="equipo">
+                                                <p:column headerText="Nombre">
+                                                    <h:outputLabel value="#{equipo.idCuenta.idUsuario.nombreUsuario}" />
+                                                </p:column>
+                                                <p:column headerText="Tareas">
+                                                    <h:outputLabel value="#{creditosManagedBean.buscarCantidadTareas(equipo)}" />
+                                                </p:column>
+                                                <p:column headerText="Horas" width="50%">
+                                                    <h:outputLabel value="#{creditosManagedBean.buscarTiempoTareas(equipo)}" />
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:panel>
+                                    </p:dataGrid>
+                                    
+                                </p:tab>
+                            </p:tabView>
+                            
+                        </p:tab>
+                    </p:tabView>
+                </h:form>    
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+
