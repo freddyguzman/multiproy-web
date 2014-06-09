@@ -54,9 +54,7 @@ public class GraficoManagedBean {
     
     private final String loginUsuario = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-    
-    private final SesionManagedBean sesionManagedBean = new SesionManagedBean();
-    
+        
     public GraficoManagedBean() {
     }
     
@@ -96,8 +94,13 @@ public class GraficoManagedBean {
         Collections.sort(tarjetas);
         Map<String,Number> valores;
         if(equipo.getIdTablero().getIdSprintGrupo() != null){
-            valores = inicializarMAP(equipo.getIdTablero().getIdSprintGrupo().getIdSprintAsignatura().getFechaInicioSprintAsignatura(),
-                equipo.getIdTablero().getIdSprintGrupo().getIdSprintAsignatura().getFechaTerminoSprintAsignatura());
+            if(equipo.getIdTablero().getIdSprintGrupo().getIdSprintAsignatura().getFechaTerminoSprintAsignatura().after(new Date())){
+                valores = inicializarMAP(equipo.getIdTablero().getIdSprintGrupo().getIdSprintAsignatura().getFechaInicioSprintAsignatura(),
+                new Date());
+            }else{
+                valores = inicializarMAP(equipo.getIdTablero().getIdSprintGrupo().getIdSprintAsignatura().getFechaInicioSprintAsignatura(),
+                    equipo.getIdTablero().getIdSprintGrupo().getIdSprintAsignatura().getFechaTerminoSprintAsignatura());
+            }           
         }else{
             valores = inicializarMAP(tarjetas.get(0).getFechaCreacionTarjeta(), new Date());
         }

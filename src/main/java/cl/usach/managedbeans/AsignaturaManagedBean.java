@@ -145,12 +145,12 @@ public class AsignaturaManagedBean {
     }
     
     public void nuevoSprintAsignaturas(Asignatura asig){
-        if(nombreAsignatura != null && fechaInicioSprintAsignatura != null && fechaTerminoSprintAsignatura != null){
+        if(nombreSprintAsignatura != null && fechaInicioSprintAsignatura != null && fechaTerminoSprintAsignatura != null){
             SprintAsignatura sprintA = new SprintAsignatura(nombreSprintAsignatura, 
                 descripcionSprintAsignatura, fechaInicioSprintAsignatura, 
                 fechaTerminoSprintAsignatura, asig);
             sprintAsignaturaFacade.create(sprintA);
-            FacesMessage msg = new FacesMessage("Sprint Agregado",nombreAsignatura);  
+            FacesMessage msg = new FacesMessage("Sprint Agregado",nombreSprintAsignatura);  
             FacesContext.getCurrentInstance().addMessage(null, msg);            
             limpiarDatos();
         }else{

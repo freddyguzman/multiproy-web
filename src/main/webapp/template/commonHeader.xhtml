@@ -15,10 +15,15 @@
                         <p:menuitem value="Inicio" icon="ui-icon-home" url="/faces/global/index.xhtml" />
                         <p:menuitem value="Tableros" icon="ui-icon-calculator" url="/faces/tableros/tableros.xhtml"/>
                         
-                        <p:menuitem rendered="#{sesionManagedBean.checkUserAlumno()}" value="Reportes" url="/faces/reportes/graficos.xhtml"/>
+                        <p:submenu rendered="#{sesionManagedBean.checkUserAlumno()}" label="Reportes">
+                            <p:menuitem value="Burndown Chart" url="/faces/reportes/graficos.xhtml"/>
+                            <p:menuitem value="Trabajo Semanal" url="/faces/reportes/trabajoSemanal.xhtml"/>
+                        </p:submenu>
+                        
                         <p:submenu rendered="#{sesionManagedBean.checkUserAdminAndProfesor()}" label="Reportes">
                             <p:menuitem value="Mis Tableros" url="/faces/reportes/graficos.xhtml"/>
                             <p:menuitem value="Asignaturas" url="/faces/reportes/graficosAsignaturas.xhtml" />
+                            <p:menuitem value="Trabajo Semanal" url="/faces/reportes/trabajoSemanal.xhtml"/>
                         </p:submenu>
                         
                         <p:menuitem rendered="#{sesionManagedBean.checkUserAdminAndProfesor()}" value="Créditos"

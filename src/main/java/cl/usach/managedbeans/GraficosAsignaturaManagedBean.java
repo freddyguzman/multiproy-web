@@ -57,9 +57,7 @@ public class GraficosAsignaturaManagedBean {
     
     private final String loginUsuario = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-    
-    private final SesionManagedBean sesionManagedBean = new SesionManagedBean();
-    
+        
     public GraficosAsignaturaManagedBean() {
     }
     
@@ -97,8 +95,16 @@ public class GraficosAsignaturaManagedBean {
         List<Tarjeta> tarjetas = tarjetaFacade.buscarPorTablero(tablero);
         LineChartModel model = new LineChartModel();
         Collections.sort(tarjetas);
-        Map<String,Number> valores = inicializarMAP(tablero.getIdSprintGrupo().getIdSprintAsignatura().getFechaInicioSprintAsignatura(),
+        
+        Map<String,Number> valores;
+        if(tablero.getIdSprintGrupo().getIdSprintAsignatura().getFechaTerminoSprintAsignatura().after(new Date())){
+            valores = inicializarMAP(tablero.getIdSprintGrupo().getIdSprintAsignatura().getFechaInicioSprintAsignatura(),
+                new Date());
+        }else{
+            valores = inicializarMAP(tablero.getIdSprintGrupo().getIdSprintAsignatura().getFechaInicioSprintAsignatura(),
                 tablero.getIdSprintGrupo().getIdSprintAsignatura().getFechaTerminoSprintAsignatura());
+        }       
+        
         if(valores != null){
             for (Tarjeta tarjeta : tarjetas) {           
                 for (Map.Entry<String, Number> valor : valores.entrySet()) {                
