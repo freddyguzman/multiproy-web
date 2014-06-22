@@ -74,7 +74,9 @@ public class VerTablerosManagedBean {
         if(sesionManagedBean.checkUserAdmin()){
             tableros = tableroFacade.findAll();
             for (Tablero tablero : tableros) {
-                auxE.add(equipoFacade.buscarUnEquipoPoTablero(tablero));
+                if(equipoFacade.existeEquipoPorTablero(tablero)){
+                    auxE.add(equipoFacade.buscarUnEquipoPoTablero(tablero));
+                }                
             }
             equipos = auxE;
         }else{

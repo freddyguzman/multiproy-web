@@ -9,7 +9,7 @@
     <h:body>
         <ui:composition template="/template/commonTemplate.xhtml">
             <ui:define name="content">
-                <h1>Asignaturas</h1>
+                <h1>Trabajo Semanal</h1>
                 
                 <h:form id="formDatos">
                     <p:panel>
@@ -23,7 +23,8 @@
                             <p:selectOneMenu rendered="#{sesionManagedBean.checkUserAdminAndProfesor()}" value="#{trabajoSemanalManagedBean.tipoGrafico}">
                                 <f:selectItem itemValue="0" itemLabel="General" />
                                 <f:selectItem itemValue="1" itemLabel="Alumnos" />
-                            </p:selectOneMenu>
+                                <f:selectItem itemValue="2" itemLabel="Grupos" />
+                             </p:selectOneMenu>
                             <p:commandButton value="Buscar" ajax="true" action="#{trabajoSemanalManagedBean.construirGrafico()}" update="chart"/>
                         </h:panelGrid>
                     </p:panel>

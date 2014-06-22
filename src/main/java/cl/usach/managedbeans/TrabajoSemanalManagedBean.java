@@ -11,6 +11,7 @@ import cl.usach.entities.DetalleUsuarioTarjeta;
 import cl.usach.entities.Equipo;
 import cl.usach.entities.Miembro;
 import cl.usach.entities.SprintAsignatura;
+import cl.usach.entities.SprintGrupos;
 import cl.usach.entities.Usuario;
 import cl.usach.sessionbeans.AsignaturaFacadeLocal;
 import cl.usach.sessionbeans.DetalleUsuarioTarjetaFacadeLocal;
@@ -18,7 +19,6 @@ import cl.usach.sessionbeans.EquipoFacadeLocal;
 import cl.usach.sessionbeans.MiembroFacadeLocal;
 import cl.usach.sessionbeans.SprintAsignaturaFacadeLocal;
 import cl.usach.sessionbeans.SprintGruposFacadeLocal;
-import cl.usach.sessionbeans.TarjetaFacadeLocal;
 import cl.usach.sessionbeans.UsuarioFacadeLocal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -203,18 +203,30 @@ public class TrabajoSemanalManagedBean {
             }
         }else if(sesionManagedBean.checkUserAdminAndProfesor()){
             List<Usuario> usuarios = equipoFacade.buscarUsuariosPorAsignatura(asig);
-            if(tipoGrafico == 0){
-                ChartSeries serie = buscarDatosProfesor(asig, usuarios);
-                model.addSeries(serie);
-                model.setTitle(asig.getNombreAsignatura());
-            }else{
-                for (Usuario usr : usuarios) {
-                    List<Equipo> eqs = equipoFacade.buscarPorUsuarioyAsignatura(usr, asig);
-                    ChartSeries serie = buscarGraficoPorAsignaturaYEquipo(asig, eqs, usr.getNombreUsuario());
+            if(!usuarios.isEmpty()){
+                if(tipoGrafico == 0){
+                    ChartSeries serie = buscarDatosProfesor(asig, usuarios);
                     model.addSeries(serie);
                     model.setTitle(asig.getNombreAsignatura());
-                } 
-            }            
+                }else if(tipoGrafico == 1){
+                    for (Usuario usr : usuarios) {
+                        List<Equipo> eqs = equipoFacade.buscarPorUsuarioyAsignatura(usr, asig);
+                        ChartSeries serie = buscarGraficoPorAsignaturaYEquipo(asig, eqs, usr.getNombreUsuario());
+                        model.addSeries(serie);                        
+                    }
+                    model.setTitle(asig.getNombreAsignatura());
+                }else{
+                    List<SprintGrupos> sprintsGrupos = sprintGruposFacade.buscarPorAsignaturasGBSprintGrupo(asig);  
+                    if(!sprintsGrupos.isEmpty()){
+                        for (SprintGrupos sprintGrupos : sprintsGrupos) {
+                            List<Equipo> eqs = equipoFacade.buscarPorNombreSprintGrupo(sprintGrupos.getNombreSprintGrupo());
+                            ChartSeries serie = buscarGraficoPorAsignaturaYEquipo(asig, eqs, sprintGrupos.getNombreSprintGrupo());
+                            model.addSeries(serie);
+                        }
+                        model.setTitle(asig.getNombreAsignatura());
+                    }
+                }            
+            }
         }
         
         if(model.getSeries().isEmpty()){            
