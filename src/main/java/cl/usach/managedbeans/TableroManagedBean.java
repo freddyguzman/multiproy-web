@@ -137,10 +137,10 @@ public class TableroManagedBean {
         Equipo equ = equipoFacade.buscarPorCuentaYTablero(equipoSeleccionado.getIdCuenta(), equipoSeleccionado.getIdTablero().getIdTableroExt());
         equipoFacade.remove(equ);
         if(!equipoFacade.existeEquipoPorTablero(equ.getIdTablero())){            
-            /*Tablero tab = equ.getIdTablero();
-            tab.setIdSprintGrupo(null);            
-            tableroFacade.edit(tab);*/
-            tableroFacade.remove(equ.getIdTablero());
+            Tablero tab = equ.getIdTablero();
+            if(tab.getIdSprintGrupo() == null){
+                tableroFacade.remove(equ.getIdTablero());
+            }            
             
             int pos = equipos.indexOf(equipoSeleccionado);
             if(pos != -1){
